@@ -1,0 +1,45 @@
+.import-form {
+    display: flex;
+    padding: 2rem 1rem;
+    gap: 2rem;
+    flex-direction: column;
+    background-color: hsl(191, 69%, 80%);
+    box-shadow: 2px 2px 10px 0 hsl(0deg 0% 0% / 40%);
+}
+
+.import-form label {
+    position: relative;
+    font-size: 18px;
+    line-height: 30px;
+}
+
+.import-form label input:not(#submit-button):not(#csv-file) {
+    border: 1px solid hsl(0, 0%, 0%);
+}
+
+.import-form label input {
+    min-width: 200px;
+    min-height: 30px;
+    font-size: 20px;
+}
+
+.import-form label.invalid-field::after {
+    content: 'Field can only contain alphanumeric value';
+    position: absolute;
+    display: block;
+    font-size: 18px;
+    color: rgb(223, 71, 71);
+}
+
+.import-form #date::-webkit-calendar-picker-indicator, .import-form #submit-button {
+    cursor: pointer;
+}
+
+.import-form #submit-button {
+    width: 170px;
+    height: 34px;
+    font-size: 20px;
+    background-color: hsl(191, 35%, 40%);
+    color: #fff;
+    align-self: center;
+}
