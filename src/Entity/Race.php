@@ -31,12 +31,12 @@ class Race
         return $this->date;
     }
 
-    public function getMediumDistanceRaces(): array
+    public function getMediumDistanceRace(): array
     {
         return $this->mediumDistanceRace;
     }
 
-    public function getLongDistanceRaces(): array
+    public function getLongDistanceRace(): array
     {
         return $this->longDistanceRace;
     }
@@ -52,26 +52,26 @@ class Race
     }
 
     /**
-     * get average finish time for given race
+     * get average finish time for a given race
      *
-     * @param array $raceTimes
+     * @param array $race
      * @return string
      */
-    public function getAvgFinishTime(array $raceTimes): string
+    public function getAvgFinishTime(array $race): string
     {
-        $unixTimes = [];
+        $raceTimes = [];
 
-        foreach ($raceTimes as $time) {
-            $unixTimes[] = strtotime($time);
+        foreach ($race as $runner) {
+            $raceTimes[] = strtotime($runner[2]);
         }
 
-        $averageTime = array_sum($unixTimes) / count($unixTimes);
+        $averageTime = array_sum($raceTimes) / count($raceTimes);
 
         return date('h:i:s', $averageTime);
     }
 
     /**
-     * parse csv file and generate an array for different type of race
+     * parse csv file and generate an array for different race type
      *
      * @param string $uploadedCsvFile
      * @return void
@@ -83,6 +83,7 @@ class Race
             $row = fgetcsv($csvFile);
             
             foreach ($row as $field) {
+                $field = htmlspecialchars($field);
                 // Remove any invalid or hidden characters
                 $field = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $field);
                 
@@ -95,5 +96,24 @@ class Race
         }
 
         fclose($csvFile);
+    }
+
+    /**
+     * sort race array by runners finish time
+     *
+     * @param array $race
+     * @return array
+     */
+    public function sortRunnersByPlacement(array $race): array {
+        $finishTimes = [];
+
+        foreach ($race as $runner) {
+            $runnerTime = strtotime($runner[2]);
+            $finishTimes[] = $runnerTime;
+        }
+
+        array_multisort($finishTimes, $race);
+
+        return $race;
     }
 }
