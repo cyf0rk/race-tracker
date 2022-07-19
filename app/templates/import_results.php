@@ -1,12 +1,15 @@
-<?php 
+<?php
+use RaceTracker\View\RaceView;
+
     if (isset($_POST['submit'])) {
         $csvFileType = pathinfo($_FILES['csv-file']['name'], PATHINFO_EXTENSION);
     
         if ($csvFileType != "csv") {
             echo '<p style="color: red;">uploaded file is not a valid csv file</p>';
         } else {
-            require_once __DIR__.'/results.php';
-            exit;
+            $raceObj = new RaceView();
+            $raceObj->saveRaceData($_POST);
+            $raceObj->saveResultsData($_FILES['csv-file']['tmp_name']);
         }
     }
 ?>

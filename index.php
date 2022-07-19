@@ -1,4 +1,6 @@
-<?php ?>
+<?php 
+    require_once realpath('vendor/autoload.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +14,7 @@
 <body>
     <div class="race-tracker-wrapper">
         <h1>Track race results</h1>
-        <?php require_once __DIR__.'/templates/import_results.php';?>
+        <?php require_once __DIR__.'/app/templates/import_results.php';?>
     </div>
 </body>
 </html>
