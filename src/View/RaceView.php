@@ -12,31 +12,24 @@ use RaceTracker\Service\Calculator;
  */
 class RaceView extends RaceController
 {
-    public function showRace($raceName)
+    public function showRace(): void
     {
-        $results = $this->getRace($raceName);
-        echo 'Race name: ' . $results[0]['race_name'];
-        echo '<br/>';
-        echo 'Race date: ' . $results[0]['race_date'];
+        $template = __DIR__.'/../../app/templates/results.php';
+        $race = $this->fetchRace();
+        $results = $this->calculator->separateResultsByDistance($race[0]['0']);
+        $mediumDistanceAvgTime = $this->calculator->calculateAvgFinishTime($results['medium_distance']);
+        $longDistanceAvgTime = $this->calculator->calculateAvgFinishTime($results['long_distance']);
+
+        if (file_exists($template)) {
+            require $template;
+        }
     }
 
-    public function saveRaceData($post): void
+    public function saveRaceData(array $post): void
     {
         $raceName = $this->sanitizeInput($post['race-name']);
         $raceDate = $this->sanitizeInput($post['date']);
         $this->saveRace($raceName, $raceDate);
-    }
-    
-    protected function sanitizeInput($input)
-    {
-        $filterOptions = array('options'=>array('regexp'=>'/^[a-zA-Z0-9 -]*$/'));
-        $sanitizedInput = htmlspecialchars($input);
-        // $sanitizedInput = filter_var($sanitizedInput, FILTER_VALIDATE_REGEXP, $filterOptions);
-
-        // Remove any invalid or hidden characters
-        // $sanitizedInput = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $sanitizedInput);
-
-        return $sanitizedInput;
     }
 
     public function saveResultsData($csvFile): void
@@ -53,24 +46,27 @@ class RaceView extends RaceController
                 $line[] = $field;
             }
 
-            $results[] = $line;
+            if ($line) {
+                $results[] = $line;
+            }
         }
 
         fclose($csvFile);
 
-        $results = $this->sortResults($results);
         unset($results[0]);
-        unset($results[1]);
 
         $this->saveResults($results);
     }
 
-    public function sortResults(array $results): array
+    protected function sanitizeInput(string $input)
     {
-        $sorter = new Calculator();
+        $filterOptions = array('options'=>array('regexp'=>'/^[a-zA-Z0-9 :-]*$/'));
+        $sanitizedInput = htmlspecialchars($input);
+        $sanitizedInput = filter_var($sanitizedInput, FILTER_VALIDATE_REGEXP, $filterOptions);
 
-        $results = $sorter->sortResultsByPlacement($results);
+        // Remove any invalid or hidden characters
+        $sanitizedInput = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $sanitizedInput);
 
-        return $results;
+        return $sanitizedInput;
     }
 }

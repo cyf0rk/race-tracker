@@ -6,9 +6,9 @@ namespace RaceTracker\Controller;
 
 interface RaceControllerInterface
 {
-    public function getRace($raceName): array;
+    public function fetchRace(): array;
     
-    public function saveRace($raceName, $date): void;
+    public function saveRace(string $raceName, string $date): void;
     
-    public function saveResults($results): void;
+    public function saveResults(array $results): void;
 }

@@ -10,6 +10,8 @@ use RaceTracker\View\RaceView;
             $raceObj = new RaceView();
             $raceObj->saveRaceData($_POST);
             $raceObj->saveResultsData($_FILES['csv-file']['tmp_name']);
+            $raceObj->showRace();
+            exit;
         }
     }
 ?>

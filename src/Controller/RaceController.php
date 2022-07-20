@@ -6,23 +6,44 @@ namespace RaceTracker\Controller;
 
 use RaceTracker\Model\Race;
 use RaceTracker\Controller\RaceControllerInterface;
+use RaceTracker\Service\Calculator;
 
 class RaceController extends Race implements RaceControllerInterface
 {
-    public function getRace($raceName): array
+    protected $calculator;
+
+    public function __construct()
     {
-        $race = $this->getRace($raceName);
+       $this->calculator = new Calculator();
+    }
+
+    public function fetchRace(): array
+    {
+        $race = $this->getRace();
+        $results = $this->getResults();
+        array_push($race[0], $results);
 
         return $race;
     }
 
-    public function saveRace($raceName, $date): void
+    public function saveRace(string $raceName, string $date): void
     {
         $this->setRace($raceName, $date);
     }
 
-    public function saveResults($results): void
+    public function saveResults(array $results): void
     {
+        $results = $this->sortResultsByPlacement($results);
         $this->setResults($results);
+    }
+
+    protected function sortResultsByPlacement($race): array
+    {
+        $race = $this->calculator->separateResultsByDistance($race);
+        $mediumDistanceResults = $this->calculator->sortResultsByPlacement($race['medium_distance']);
+        $longDistanceResults = $this->calculator->sortResultsByPlacement($race['long_distance']);
+        $race = array_merge($mediumDistanceResults, $longDistanceResults);
+
+        return $race;
     }
 }

@@ -16,7 +16,7 @@ use RaceTracker\Service\Dbh;
 class Result extends Dbh
 {
 
-    protected function getResult()
+    protected function getResult(): void
     {
     }
 

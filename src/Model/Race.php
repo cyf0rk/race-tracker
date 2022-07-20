@@ -21,21 +21,32 @@ class Race extends Result
         return $this->id;
     }
 
+    protected function getRace(): array
+    {
+        $raceId = $this->getRaceId();
+        $sql = "SELECT * FROM race WHERE id = ?";
+        $statement = $this->connect()->prepare($sql);
+        $statement->execute([$raceId]);
+
+        $results = $statement->fetchAll();
+        return $results;
+    }
+
+    protected function getResults(): array
+    {
+        $raceId = $this->getRaceId();
+        $sql = "SELECT * FROM results WHERE race_id = ?";
+        $statement = $this->connect()->prepare($sql);
+        $statement->execute([$raceId]);
+
+        $results = $statement->fetchAll();
+        return $results;
+    }
+
     protected function setRaceId(): void
     {
         $id = rand(100, 100000);
         $this->id = $id;
-    }
-
-    protected function getRace(string $raceName): array
-    {
-        $sanitizedRaceName = mysqli_real_escape_string($this->mysqli(), $raceName);
-        $sql = "SELECT * FROM race WHERE race_name = ?";
-        $statement = $this->connect()->prepare($sql);
-        $statement->execute([$sanitizedRaceName]);
-
-        $results = $statement->fetchAll();
-        return $results;
     }
 
     protected function setRace(string $raceName, string $raceDate): void
