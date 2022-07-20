@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace RaceTracker\View;
 
 use RaceTracker\Controller\RaceController;
-use RaceTracker\Service\Calculator;
 
 /**
  * RaceView class
  */
 class RaceView extends RaceController
 {
+    /**
+     * generate data for a race and display template
+     *
+     * @return void
+     */
     public function showRace(): void
     {
         $template = __DIR__.'/../../app/templates/results.php';
@@ -25,6 +29,12 @@ class RaceView extends RaceController
         }
     }
 
+    /**
+     * save data about a race from input
+     *
+     * @param array $post POST request
+     * @return void
+     */
     public function saveRaceData(array $post): void
     {
         $raceName = $this->sanitizeInput($post['race-name']);
@@ -32,6 +42,12 @@ class RaceView extends RaceController
         $this->saveRace($raceName, $raceDate);
     }
 
+    /**
+     * process csv file and save results data
+     *
+     * @param [type] $csvFile
+     * @return void
+     */
     public function saveResultsData($csvFile): void
     {
         $results = [];
@@ -53,12 +69,19 @@ class RaceView extends RaceController
 
         fclose($csvFile);
 
+        // remove first header row from csv
         unset($results[0]);
 
         $this->saveResults($results);
     }
 
-    protected function sanitizeInput(string $input)
+    /**
+     * sanitize given input
+     *
+     * @param string $input
+     * @return string
+     */
+    protected function sanitizeInput(string $input): string
     {
         $filterOptions = array('options'=>array('regexp'=>'/^[a-zA-Z0-9 :-]*$/'));
         $sanitizedInput = htmlspecialchars($input);

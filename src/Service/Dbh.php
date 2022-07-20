@@ -6,6 +6,9 @@ use mysqli;
 use PDO;
 require_once 'app/config/loadenv.php';
 
+/**
+ * Database handler class
+ */
 class Dbh
 {
     protected function connect()

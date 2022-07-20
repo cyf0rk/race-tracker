@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace RaceTracker\Service;
 
+/**
+ * Calculator class
+ */
 class Calculator
 {
     /**
@@ -48,6 +51,12 @@ class Calculator
         return $race;
     }
 
+    /**
+     * separate given race into an array of results by distance value
+     *
+     * @param array $race
+     * @return array
+     */
     public function separateResultsByDistance(array $race): array
     {
         $resultsByDistance = [

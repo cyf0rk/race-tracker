@@ -9,18 +9,32 @@ use RaceTracker\Model\Result;
 /**
  * Race class
  * 
- * @property string $raceName
- * @property string $date
+ * @property int $id race_id for relation between race and results
  */
 class Race extends Result
 {
+    /**
+     * race_id for relation between race and results
+     *
+     * @var integer
+     */
     protected int $id;
 
+    /**
+     * get race_id
+     *
+     * @return integer
+     */
     protected function getRaceId(): int
     {
         return $this->id;
     }
 
+    /**
+     * fetch data about a race with a specific id from database
+     *
+     * @return array
+     */
     protected function getRace(): array
     {
         $raceId = $this->getRaceId();
@@ -32,6 +46,11 @@ class Race extends Result
         return $results;
     }
 
+    /**
+     * fetch race results data from database
+     *
+     * @return array
+     */
     protected function getResults(): array
     {
         $raceId = $this->getRaceId();
@@ -43,12 +62,24 @@ class Race extends Result
         return $results;
     }
 
+    /**
+     * generate id for a race
+     *
+     * @return void
+     */
     protected function setRaceId(): void
     {
         $id = rand(100, 100000);
         $this->id = $id;
     }
 
+    /**
+     * generate id for a race and insert new data about a race into database
+     *
+     * @param string $raceName
+     * @param string $raceDate
+     * @return void
+     */
     protected function setRace(string $raceName, string $raceDate): void
     {
         $this->setRaceId();
@@ -58,9 +89,15 @@ class Race extends Result
         $statement->execute([$raceId, $raceName, $raceDate]);
     }
 
-    protected function setResults(array $results): void
+    /**
+     * loop through race and use method from Result class to insert each result into database
+     *
+     * @param array $race
+     * @return void
+     */
+    protected function setResults(array $race): void
     {
-        foreach ($results as $result) {
+        foreach ($race as $result) {
             $fullName = $result[0];
             $raceTime = $result[2];
             $distance = $result[1];
