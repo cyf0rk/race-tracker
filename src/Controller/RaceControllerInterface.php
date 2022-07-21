@@ -4,11 +4,40 @@ declare(strict_types=1);
 
 namespace RaceTracker\Controller;
 
+/**
+ * RaceController interface
+ */
 interface RaceControllerInterface
 {
-    public function getRace($raceName): array;
+    /**
+     * handle client form submit
+     *
+     * @param array $post
+     * @param array $file
+     * @return void
+     */
+    public function handleSubmit(array $post, array $file): void;
+
+    /**
+     * display race data
+     *
+     * @return void
+     */
+    public function displayRace(): void;
     
-    public function saveRace($raceName, $date): void;
+    /**
+     * insert data about race into database
+     *
+     * @param array $post POST request data
+     * @return void
+     */
+    public function saveRace(array $post): void;
     
-    public function saveResults($results): void;
+    /**
+     * insert race results data into database
+     *
+     * @param array $post POST request data
+     * @return void
+     */
+    public function saveResults(string $file): void;
 }

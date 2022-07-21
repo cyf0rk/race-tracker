@@ -1,3 +1,10 @@
+:root {
+    --blue: hsl(191, 69%, 80%);
+    --dark-blue: hsl(191, 35%, 40%);
+    --grey: hsl(0, 0%, 42%);
+    --invalid: hsl(0, 70%, 58%);
+}
+
 html, body {
     margin: 0;
     padding: 0;
@@ -18,4 +25,8 @@ html, body {
 .race-tracker-wrapper h1 {
     font-size: 28px;
     color: hsl(191, 35%, 40%);
+}
+
+a, button {
+    cursor: pointer;
 }

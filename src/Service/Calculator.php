@@ -1,7 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RaceTracker\Service;
 
+/**
+ * Calculator class
+ */
 class Calculator
 {
     /**
@@ -10,40 +15,16 @@ class Calculator
      * @param array $race
      * @return string
      */
-    public function getAvgFinishTime(array $race): string
+    public function calculateAvgFinishTime(array $race): string
     {
         $raceTimes = [];
 
         foreach ($race as $runner) {
-            $raceTimes[] = strtotime($runner[2]);
+            $raceTimes[] = strtotime($runner['race_time']);
         }
 
-        $averageTime = array_sum($raceTimes) / count($raceTimes);
+        $averageTime = intval(array_sum($raceTimes) / count($raceTimes));
 
         return date('h:i:s', $averageTime);
     }
-
-    /**
-     * sort race array by runners finish time
-     *
-     * @param array $race
-     * @return array
-     */
-    public function sortResultsByPlacement(array $race): array {
-        $finishTimes = [];
-
-        foreach ($race as $runner) {
-            $runnerTime = strtotime($runner[2]);
-            $finishTimes[] = $runnerTime;
-        }
-
-        array_multisort($finishTimes, $race);
-
-        foreach ($race as $key => $runner) {
-            array_push($race[$key], $key - 1);
-        }
-
-        return $race;
-    }
-
 }

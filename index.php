@@ -9,12 +9,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="public/css/index.css">
     <link rel="stylesheet" href="public/css/form.css">
+    <link rel="stylesheet" href="public/css/results.css">
     <title>Race tracker</title>
 </head>
 <body>
     <div class="race-tracker-wrapper">
         <h1>Track race results</h1>
-        <?php require_once __DIR__.'/app/templates/import_results.php';?>
+        <?php require_once __DIR__.'/templates/import_results.php';?>
     </div>
 </body>
 </html>
