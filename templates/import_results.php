@@ -1,19 +1,11 @@
 <?php
-use RaceTracker\View\RaceView;
+use RaceTracker\Controller\RaceController;
 
-    if (isset($_POST['submit'])) {
-        $csvFileType = pathinfo($_FILES['csv-file']['name'], PATHINFO_EXTENSION);
-    
-        if ($csvFileType != "csv") {
-            echo '<p style="color: red;">uploaded file is not a valid csv file</p>';
-        } else {
-            $raceObj = new RaceView();
-            $raceObj->saveRaceData($_POST);
-            $raceObj->saveResultsData($_FILES['csv-file']['tmp_name']);
-            $raceObj->showRace();
-            exit;
-        }
-    }
+if (isset($_POST['submit'])) {
+    $raceController = new RaceController();
+    $raceController->handleSubmit($_POST, $_FILES['csv-file']);
+}
+
 ?>
 <form class="import-form" action="<?PHP echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" enctype="multipart/form-data" onsubmit="return validateInput()">
     <label class="race-name-label" for="race-name" onfocusout="validateInput()">Race name:<br/>

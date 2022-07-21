@@ -10,26 +10,34 @@ namespace RaceTracker\Controller;
 interface RaceControllerInterface
 {
     /**
-     * fetch race data from database
+     * handle client form submit
      *
-     * @return array
+     * @param array $post
+     * @param array $file
+     * @return void
      */
-    public function fetchRace(): array;
+    public function handleSubmit(array $post, array $file): void;
+
+    /**
+     * display race data
+     *
+     * @return void
+     */
+    public function displayRace(): void;
     
     /**
      * insert data about race into database
      *
-     * @param string $raceName
-     * @param string $date
+     * @param array $post POST request data
      * @return void
      */
-    public function saveRace(string $raceName, string $date): void;
+    public function saveRace(array $post): void;
     
     /**
      * insert race results data into database
      *
-     * @param array $results
+     * @param array $post POST request data
      * @return void
      */
-    public function saveResults(array $results): void;
+    public function saveResults(string $file): void;
 }
