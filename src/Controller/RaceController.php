@@ -8,7 +8,6 @@ use RaceTracker\Controller\RaceControllerInterface;
 use RaceTracker\Model\Race;
 use RaceTracker\Service\Calculator;
 use RaceTracker\Service\Sorter;
-use RaceTracker\View\EditView;
 use RaceTracker\View\RaceView;
 
 /**
@@ -17,28 +16,12 @@ use RaceTracker\View\RaceView;
 class RaceController extends Race implements RaceControllerInterface
 {
     /**
-     * handle client form submit
-     *
-     * @param array $post
-     * @param string $file
-     * @return void
-     */
-    public function handleSubmit(array $post, string $file): void
-    {
-        $this->saveRace($post);
-        $this->saveResults($file);
-        $raceId = $this->getRaceId();
-        $this->displayRace($raceId);
-        exit;
-    }
-
-    /**
-     * get race info, data and average finish times and display it in a view
+     * display race by given id
      *
      * @param integer $raceId
      * @return void
      */
-    public function displayRace($raceId): void
+    public function displayRace(int $raceId): void
     {
         $race = $this->getRaceInfo($raceId);
         $results = $this->getResults($raceId);
@@ -48,57 +31,5 @@ class RaceController extends Race implements RaceControllerInterface
 
         $raceView = new RaceView($race, $raceAvgTimes);
         $raceView->showRace();
-    }
-
-    /**
-     * handle client edit request
-     *
-     * @param int $id
-     * @return void
-     */
-    public function handleEditRequest(int $id): void
-    {
-        $result = $this->getResult($id);
-        $editView = new EditView($result);
-        $editView->showEditForm();
-    }
-
-    /**
-     * handle client table edit
-     *
-     * @param array $post
-     * @param int $id
-     * @return void
-     */
-    public function handleResultEdit(array $post, int $id): void
-    {
-        $this->updateResult($id, $post['full-name'], $post['race-time']);
-        $result = $this->getResult($id);
-        $this->updateResults($result['race_id']);
-        $this->displayRace($result['race_id']);
-    }
-
-    /**
-     * save data about a race to database
-     *
-     * @param array $post
-     * @return void
-     */
-    public function saveRace(array $post): void
-    {
-        $this->setRace($post['race-name'], $post['date']);
-    }
-
-    /**
-     * save race results to database
-     *
-     * @param string $file
-     * @return void
-     */
-    public function saveResults(string $file): void
-    {
-        $results = $this->processCsvFile($file);
-        $results = Calculator::calculatePlacements($results);
-        $this->setResults($results);
     }
 }

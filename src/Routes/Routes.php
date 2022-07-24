@@ -1,16 +1,17 @@
 <?php
 session_start();
 
+use RaceTracker\Controller\EditController;
 use RaceTracker\Controller\ImportController;
 use RaceTracker\Model\Route;
 use RaceTracker\Controller\RaceController;
-use RaceTracker\Service\Validation;
 
 Route::set('index.php', function() {
     $importController = new ImportController();
+    session_reset();
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') { 
-        $importController->handleFormValidation();
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['submit-import']) { 
+        $importController->handleFormSubmit();
     } else {
         $importController->displayImportForm([]);
     }
@@ -20,14 +21,15 @@ Route::set('index.php', function() {
 Route::set('display-results', function() {
     $controller = new RaceController;
 
-    if (isset($_POST['result-edit-submit'])) {
-        $controller->handleResultEdit($_POST, $_POST['result-id']);
-    } else {
-        $controller->handleSubmit($_SESSION['POST'], $_SESSION['POST']['csv-file']);
-    }
+    $controller->displayRace($_SESSION['race_id']);
 });
 
 Route::set('edit-result', function() {
-    $controller = new RaceController;
-    $controller->handleEditRequest($_POST['result-id']);
+    $controller = new EditController;
+
+    if ($_POST['result-edit-submit']) {
+        $controller->handleEditFormSubmit($_POST);
+    } else {
+        $controller->handleEditRequest($_POST['id']);
+    }
 });

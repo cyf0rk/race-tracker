@@ -1,7 +1,7 @@
 <div class="race-tracker-wrapper">
     <h1>Race results</h1>
     <form class="edit-result-request-form" action="/test-project/edit-result" method="POST">
-        <input type="number" name="result-id" id="result-id" required>
+        <input type="number" name="id" id="result-id" required>
         <div class="results-wrapper">
             <h2>Race Title: <?php echo $this->race['race_info']['race_name']; ?></h2>
             <p>Race date: <?php echo $this->race['race_info']['race_date']; ?></p>

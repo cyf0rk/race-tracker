@@ -12,10 +12,12 @@ use RaceTracker\Controller\RaceController;
 class EditView extends RaceController
 {
     protected array $result;
+    protected array $errors;
 
-    public function __construct(array $result)
+    public function __construct(array $result, array $errors)
     {
         $this->result = $result;
+        $this->errors = $errors;
     }
 
     /**

@@ -50,12 +50,6 @@ a.button {
     text-decoration: none;
 }
 
-a.save-button {
-    margin-top: 2rem;
-    font-size: 18px;
-    background-color: var(--dark-blue);
-}
-
 a.back-button {
     margin-top: 1rem;
     font-size: 14px;
