@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace RaceTracker\Service;
 
+use RaceTracker\Service\Sorter;
+
 /**
  * Calculator class
  */
@@ -15,7 +17,7 @@ class Calculator
      * @param array $race
      * @return string
      */
-    public function calculateAvgFinishTime(array $race): string
+    public static function calculateAvgFinishTime(array $race): string
     {
         $raceTimes = [];
 
@@ -26,5 +28,21 @@ class Calculator
         $averageTime = intval(array_sum($raceTimes) / count($raceTimes));
 
         return date('h:i:s', $averageTime);
+    }
+
+    /**
+     * take results array and recalculate placements then return array in ascending order by result placement
+     *
+     * @param array $results
+     * @return array
+     */
+    public static function calculatePlacements(array $results): array
+    {
+        $results = Sorter::separateResultsByDistance($results);
+        $mediumDistanceResults = Sorter::sortResultsByPlacement($results['medium_distance']);
+        $longDistanceResults = Sorter::sortResultsByPlacement($results['long_distance']);
+        $results = array_merge($mediumDistanceResults, $longDistanceResults);
+
+        return $results;
     }
 }

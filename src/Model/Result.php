@@ -31,17 +31,19 @@ class Result extends Dbh
 
     private int $raceId;
 
-    protected function getResult(): array
+    /**
+     * get result by id
+     *
+     * @param integer $id
+     * @return array
+     */
+    protected function getResult(int $id): array
     {
-        $result = [
-            'id' => $this->id,
-            'full_name' => $this->fullName,
-            'race_time' => $this->raceTime,
-            'distance' => $this->distance,
-            'placement' => $this->placement,
-            'race_id' => $this->raceId
-        ];
+        $sql = "SELECT * FROM results WHERE id = ?";
+        $statement = $this->connect()->prepare($sql);
+        $statement->execute([$id]);
 
+        $result = $statement->fetch();
         return $result;
     }
 
@@ -52,7 +54,7 @@ class Result extends Dbh
      */
     protected function setResultId(): void
     {
-        $id = rand(100, 10000000);
+        $id = rand(100, 1000000000);
         $this->id = $id;
     }
 
@@ -69,14 +71,29 @@ class Result extends Dbh
     protected function setResult(string $fullName, string $raceTime, string $distance, int $placement, int $raceId): void
     {
         $this->setResultId();
-        $this->fullName = $fullName;
-        $this->raceTime = $raceTime;
-        $this->distance = $distance;
-        $this->placement = $placement;
-        $this->raceId = $raceId;
-
         $sql = "INSERT INTO results(id, full_name, race_time, distance, placement, race_id) VALUES (?, ?, ?, ?, ?, ?)";
         $statement = $this->connect()->prepare($sql);
         $statement->execute([$this->id, $fullName, $raceTime, $distance, $placement, $raceId]);
+    }
+
+    /**
+     * update result by given id
+     *
+     * @param integer $id
+     * @param string $fullName
+     * @param string $raceTime
+     * @return void
+     */
+    protected function updateResult(int $id, string $fullName, string $raceTime, int $placement = null): void
+    {
+        if ($placement) {
+            $sql = "UPDATE results SET full_name = ?, race_time = ?, placement = ? WHERE id = ?";
+            $statement = $this->connect()->prepare($sql);
+            $statement->execute([$fullName, $raceTime, $placement, $id]);
+        } else {
+            $sql = "UPDATE results SET full_name = ?, race_time = ? WHERE id = ?";
+            $statement = $this->connect()->prepare($sql);
+            $statement->execute([$fullName, $raceTime, $id]);
+        }
     }
 }

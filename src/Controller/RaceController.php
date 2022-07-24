@@ -6,7 +6,9 @@ namespace RaceTracker\Controller;
 
 use RaceTracker\Controller\RaceControllerInterface;
 use RaceTracker\Model\Race;
+use RaceTracker\Service\Calculator;
 use RaceTracker\Service\Sorter;
+use RaceTracker\View\EditView;
 use RaceTracker\View\RaceView;
 
 /**
@@ -30,7 +32,8 @@ class RaceController extends Race implements RaceControllerInterface
         } else {
             $this->saveRace($post);
             $this->saveResults($file['tmp_name']);
-            $this->displayRace();
+            $raceId = $this->getRaceId();
+            $this->displayRace($raceId);
             exit;
         }
     }
@@ -38,20 +41,47 @@ class RaceController extends Race implements RaceControllerInterface
     /**
      * get race info, data and average finish times and display it in a view
      *
+     * @param integer $raceId
      * @return void
      */
-    public function displayRace(): void
+    public function displayRace($raceId): void
     {
-        $race = $this->getRaceInfo();
-        $results = $this->getResults();
-        $sorter = new Sorter();
-        $results = $sorter->sortResultsByPlacement($results);
+        $race = $this->getRaceInfo($raceId);
+        $results = $this->getResults($raceId);
+        $results = Calculator::calculatePlacements($results);
         $raceAvgTimes = $this->getAvgFinishTimes($results);
-
-        array_push($race, $results);
+        $race = Sorter::createAssociativeRaceArray($race, $results, 'results');
 
         $raceView = new RaceView($race, $raceAvgTimes);
         $raceView->showRace();
+    }
+
+    /**
+     * handle client edit request
+     *
+     * @param int $id
+     * @return void
+     */
+    public function handleEditRequest(int $id): void
+    {
+        $result = $this->getResult($id);
+        $editView = new EditView($result);
+        $editView->showEditForm();
+    }
+
+    /**
+     * handle client table edit
+     *
+     * @param array $post
+     * @param int $id
+     * @return void
+     */
+    public function handleResultEdit(array $post, int $id): void
+    {
+        $this->updateResult($id, $post['full-name'], $post['race-time']);
+        $result = $this->getResult($id);
+        $this->updateResults($result['race_id']);
+        $this->displayRace($result['race_id']);
     }
 
     /**
@@ -74,7 +104,7 @@ class RaceController extends Race implements RaceControllerInterface
     public function saveResults(string $file): void
     {
         $results = $this->processCsvFile($file);
-        $results = $this->sortResultsByPlacement($results);
+        $results = Calculator::calculatePlacements($results);
         $this->setResults($results);
     }
 }

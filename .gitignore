@@ -3,3 +3,4 @@ composer.lock
 /vendor
 .vscode
 php.ini
+.htaccess
