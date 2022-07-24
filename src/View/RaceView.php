@@ -28,7 +28,7 @@ class RaceView extends RaceController
      */
     public function showRace(): void
     {
-        $template = __DIR__.'/../../templates/results.php';
+        $template = __DIR__.'/../../templates/display_results.php';
 
         if (file_exists($template)) {
             require $template;

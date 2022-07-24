@@ -15,7 +15,7 @@ class Sorter
      * @param array $race
      * @return array
      */
-    public function sortResultsByPlacement(array $race): array {
+    public static function sortResultsByPlacement(array $race): array {
         $finishTimes = [];
 
         foreach ($race as $runner) {
@@ -30,8 +30,11 @@ class Sorter
 
         array_multisort($finishTimes, $race);
 
-        if (!$race[0]['placement']) {
-            foreach ($race as $key => $runner) {
+        foreach ($race as $key => $runner) {
+            if ($runner['placement']) {
+                $runner['placement'] = $key + 1;
+                $race[$key] = $runner;
+            } else {
                 array_push($race[$key], $key + 1);
             }
         }
@@ -45,7 +48,7 @@ class Sorter
      * @param array $race
      * @return array
      */
-    public function separateResultsByDistance(array $race): array
+    public static function separateResultsByDistance(array $race): array
     {
         $resultsByDistance = [
             'medium_distance' => [],
@@ -61,5 +64,22 @@ class Sorter
         }
 
         return $resultsByDistance;
+    }
+
+    /**
+     * create associative array
+     *
+     * @param array $targetArray
+     * @param array $appendArray
+     * @param string $arrayName
+     * @return array
+     */
+    public static function createAssociativeRaceArray(array $targetArray, array $appendArray, string $arrayName): array
+    {
+        foreach ($appendArray as $column) {
+            $targetArray[$arrayName][] = $column;
+        }
+
+        return $targetArray;
     }
 }

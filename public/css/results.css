@@ -14,12 +14,23 @@
     margin: 2rem 0 0;
 }
 
-.results-wrapper .results-table .results-row td {
+.results-wrapper table,
+.results-wrapper th,
+.results-wrapper td {
+    border: 1px solid;
+}
+
+.results-wrapper .results-table .results-row td,
+.results-wrapper .results-table .results-row th {
     padding: 0.2em 0.6em;
 }
 
 .results-wrapper .results-table .results-row:first-child td {
     font-weight: 600;
+}
+
+.results-wrapper .results-table .results-row td[contenteditable="true"] {
+    background-color: #fff;
 }
 
 .results-wrapper .results-table .results-row .result-edit-button {
@@ -31,12 +42,6 @@
     align-self: center;
 } 
 
-.results-wrapper table,
-.results-wrapper th,
-.results-wrapper td {
-    border: 1px solid;
-}
-
 a.button {
     padding: 0.5em 1em;
     border: 1px solid #000;
@@ -45,14 +50,12 @@ a.button {
     text-decoration: none;
 }
 
-a.save-button {
-    margin-top: 2rem;
-    font-size: 18px;
-    background-color: var(--dark-blue);
-}
-
 a.back-button {
     margin-top: 1rem;
     font-size: 14px;
     background-color: var(--grey);
+}
+
+#edit-request-submit, #result-id {
+    display: none;
 }

@@ -36,27 +36,27 @@ class Race extends Result
     /**
      * get race info
      *
+     * @param int $id
      * @return array
      */
-    protected function getRaceInfo(): array
+    protected function getRaceInfo(int $id): array
     {
-        $raceInfo = [
-            'id' => $this->id,
-            'race_name' => $this->raceName,
-            'race_date' => $this->raceDate
-        ];
+        $sql = "SELECT * FROM race WHERE id = ?";
+        $statement = $this->connect()->prepare($sql);
+        $statement->execute([$id]);
 
+        $raceInfo['race_info'] = $statement->fetchAll()[0];
         return $raceInfo;
     }
 
     /**
      * fetch race results data from database
      *
+     * @param int $raceId
      * @return array
      */
-    protected function getResults(): array
+    protected function getResults(int $raceId): array
     {
-        $raceId = $this->getRaceId();
         $sql = "SELECT * FROM results WHERE race_id = ?";
         $statement = $this->connect()->prepare($sql);
         $statement->execute([$raceId]);
@@ -72,7 +72,7 @@ class Race extends Result
      */
     protected function setRaceId(): void
     {
-        $id = rand(100, 10000000);
+        $id = rand(100, 1000000000);
         $this->id = $id;
     }
 
@@ -125,6 +125,26 @@ class Race extends Result
     }
 
     /**
+     * loop through race results and use method from Result entity to update each result in database
+     *
+     * @param integer $raceId
+     * @return void
+     */
+    protected function updateResults(int $raceId): void
+    {
+        $results = $this->getResults($raceId);
+        $results = Calculator::calculatePlacements($results);
+
+        foreach ($results as $result) {
+            $id = $result['id'];
+            $fullName = $result['full_name'];
+            $raceTime = $result['race_time'];
+            $placement = $result['placement'];
+            $this->updateResult($id, $fullName, $raceTime, $placement);
+        }
+    }
+
+    /**
      * process csv file and return results array
      *
      * @param [type] $csvFile
@@ -150,27 +170,13 @@ class Race extends Result
         }
 
         fclose($csvFile);
+        // delete temporary file after processing
+        unlink($file);
+        session_reset();
 
         unset($results[0]);
 
         return $results;
-    }
-
-    /**
-     *  sort results by placement
-     *
-     * @param array $race
-     * @return array
-     */
-    protected function sortResultsByPlacement(array $race): array
-    {
-        $sorter = new Sorter();
-        $race = $sorter->separateResultsByDistance($race);
-        $mediumDistanceResults = $sorter->sortResultsByPlacement($race['medium_distance']);
-        $longDistanceResults = $sorter->sortResultsByPlacement($race['long_distance']);
-        $race = array_merge($mediumDistanceResults, $longDistanceResults);
-
-        return $race;
     }
 
     /**
@@ -181,12 +187,10 @@ class Race extends Result
      */
     protected function getAvgFinishTimes(array $race): array
     {
-        $sorter = new Sorter();
-        $calculator = new Calculator();
 
-        $race = $sorter->separateResultsByDistance($race);
-        $mediumDistanceAvgFinishTime = $calculator->calculateAvgFinishTime($race['medium_distance']);
-        $longDistanceAvgFinishTime = $calculator->calculateAvgFinishTime($race['long_distance']);
+        $race = Sorter::separateResultsByDistance($race);
+        $mediumDistanceAvgFinishTime = Calculator::calculateAvgFinishTime($race['medium_distance']);
+        $longDistanceAvgFinishTime = Calculator::calculateAvgFinishTime($race['long_distance']);
 
         $avgFinishTimes = [
             'medium_distance_avg_finish_time' => $mediumDistanceAvgFinishTime,
@@ -210,6 +214,7 @@ class Race extends Result
 
         // Remove any invalid or hidden characters
         $sanitizedInput = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $sanitizedInput);
+        $sanitizedInput = mysqli_real_escape_string($this->mysqli(), $sanitizedInput);
 
         return $sanitizedInput;
     }
