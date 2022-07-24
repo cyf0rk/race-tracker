@@ -20,22 +20,16 @@ class RaceController extends Race implements RaceControllerInterface
      * handle client form submit
      *
      * @param array $post
-     * @param array $file
+     * @param string $file
      * @return void
      */
-    public function handleSubmit(array $post, array $file): void
+    public function handleSubmit(array $post, string $file): void
     {
-        $csvFileType = pathinfo($file['name'], PATHINFO_EXTENSION);
-    
-        if ($csvFileType != "csv") {
-            echo '<p style="color: red;">uploaded file is not a valid csv file</p>';
-        } else {
-            $this->saveRace($post);
-            $this->saveResults($file['tmp_name']);
-            $raceId = $this->getRaceId();
-            $this->displayRace($raceId);
-            exit;
-        }
+        $this->saveRace($post);
+        $this->saveResults($file);
+        $raceId = $this->getRaceId();
+        $this->displayRace($raceId);
+        exit;
     }
 
     /**

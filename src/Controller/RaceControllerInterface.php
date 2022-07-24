@@ -13,10 +13,10 @@ interface RaceControllerInterface
      * handle client form submit
      *
      * @param array $post
-     * @param array $file
+     * @param string $file
      * @return void
      */
-    public function handleSubmit(array $post, array $file): void;
+    public function handleSubmit(array $post, string $file): void;
 
     /**
      * handle result edit

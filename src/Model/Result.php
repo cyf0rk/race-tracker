@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace RaceTracker\Model;
 
-use RaceTracker\Service\Dbh;
+use RaceTracker\Model\Dbh;
 
 /**
  * Result class

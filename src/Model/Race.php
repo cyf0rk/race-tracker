@@ -170,6 +170,9 @@ class Race extends Result
         }
 
         fclose($csvFile);
+        // delete temporary file after processing
+        unlink($file);
+        session_destroy();
 
         unset($results[0]);
 

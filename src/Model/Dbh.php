@@ -1,6 +1,6 @@
 <?php
 
-namespace RaceTracker\Service;
+namespace RaceTracker\Model;
 
 use mysqli;
 use PDO;
